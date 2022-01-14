@@ -1,2 +1,5 @@
 # cue_splitter_and_encoder
-.cue splitter and encoder
+```
+Use python3 cuesplit.py "yourfile.cue"
+change lib (codec) and bitrate parameters at will.
+```
