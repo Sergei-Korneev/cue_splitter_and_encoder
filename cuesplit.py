@@ -1,5 +1,4 @@
 ''' 
-    
     Cue file splitter and encoder
     Sergei Korneev [2021]
 
@@ -100,9 +99,9 @@ def __parseacue ():
         if 'COMMENT' in line:
             geninfo["comment"]=' '.join(line.split(' ')[2:]).replace('\n','').replace('"','')
         if 'PERFORMER' in line:
-            geninfo["performer"]=' '.join(line.split(' ')[1:]).replace('\n','').replace('"','')
+            geninfo["performer"]=' '.join(line.split(' ')[1:]).replace('\n','').replace('"','').lstrip().title()
         if 'TITLE' in line:
-            geninfo["title"]=' '.join(line.split(' ')[1:]).replace('\n','').replace('"','')
+            geninfo["title"]=' '.join(line.split(' ')[1:]).replace('\n','').replace('"','').lstrip().title()
         if 'FILE' in line:
             geninfo["file"]=' '.join(line.split(' ')[1:]).split('"')[1::2]  
             geninfostart=0
@@ -112,9 +111,9 @@ def __parseacue ():
            tr={}
            tr["num"]=line.split('TRACK')[1].split(' ')[1]
        if 'TITLE' in line:     
-           tr["title"]=' '.join(line.split('TITLE')[1:]).replace('\n','').replace('"','')
+           tr["title"]=' '.join(line.split('TITLE')[1:]).replace('\n','').replace('"','').lstrip().title()
        if 'PERFORMER' in line: 
-           tr["performer"]=' '.join(line.split('PERFORMER')[1:]).replace('\n','').replace('"','')
+           tr["performer"]=' '.join(line.split('PERFORMER')[1:]).replace('\n','').replace('"','').lstrip().title()
        if 'INDEX 01' in line:
            index=line.split('INDEX 01')[1].replace('\n','').replace(' ','').split(':')[0:2]
            hour='{:02.0f}'.format(int(int(index[0])/60))
@@ -127,7 +126,7 @@ def __parseacue ():
         print("Cannot find " + geninfo["file"][0])
         sys.exit(1)
    
- path = Path(__rpunsf(geninfo["title"]))
+ path = Path(__rpunsf(geninfo["performer"]+' - '+geninfo["title"]))
  path.mkdir(parents=True, exist_ok=True)
  
  for idx, val in enumerate(tracks):
