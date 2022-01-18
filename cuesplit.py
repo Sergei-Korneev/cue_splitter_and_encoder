@@ -44,6 +44,7 @@ def __precheck ():
     
     if (len(sys.argv)==1) or  not os.path.exists(sys.argv[1]):  
      print("The cue file does not exist.")
+     __help()
      sys.exit(1)
 
     try:
