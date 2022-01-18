@@ -43,8 +43,9 @@ def __precheck ():
     #check if an associated wave / flac file exists
     
     if (len(sys.argv)==1) or  not os.path.exists(sys.argv[1]):  
-     print("The cue file does not exist.")
-     __help()
+        __help()
+        print("\nThe cue file does not exist.")
+     
      sys.exit(1)
 
     try:
