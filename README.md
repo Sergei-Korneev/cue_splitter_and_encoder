@@ -4,9 +4,9 @@
 
 1. Install Python 3
 
-2. Run in console pip install chardet
+2. Run in console "pip install chardet"
 
-3. change lib (codec) and bitrate parameters at will.
+3. Change lib (codec) and bitrate parameters at will.
 
 4. Run python cuesplit.py "yourfile.cue"
 
