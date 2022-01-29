@@ -3,15 +3,31 @@
     Sergei Korneev [2021]
 
 '''
+
 import subprocess, os, sys
 from pathlib import Path
 from chardet import detect
 
-cudir=(os.path.abspath(os.getcwd()))
-#Encoding params. I use OPUS with excellent quality.
+
+'''
+
+Encoding params. I use OPUS with excellent quality.
+Use:
+
+bitrate='512k'
+lib='aac'
+
+or
+
+bitrate='512k'
+lib='flac'
+
+'''
+
 bitrate='512k'
 lib='libopus'
 
+cudir=(os.path.abspath(os.getcwd()))
 
 if (sys.version_info.major != 3 and sys.version_info.minor != 8):
     print("This script is tested on Python 3.8!")
@@ -137,7 +153,7 @@ def __parseacue ():
        cmd.append(('-to '+tracks[idx+1]["index"]).split(' ')[0])
        cmd.append(('-to '+tracks[idx+1]["index"]).split(' ')[1])
   except:
-       pass
+       print("End of tracks reached.")
   cmd.extend(['-i',cudir+'/'+str(geninfo["file"][0]),'-b:a',bitrate,'-c:a',lib,'-vn','-metadata','picture='+cudir+'/'+'cover.jpg','-metadata','title='+tracks[idx]["title"],'-metadata','artist='+tracks[idx]["performer"],'-metadata','date='+geninfo["date"],'-metadata','genre='+geninfo["genre"],'-metadata','comment='+geninfo["comment"]+'\nRipped by Cue Splitter (Sergei Korneev, 2021)', cudir+'/'+str(path)+'/'+__rpunsf(val["num"]+' - '+val["title"]+'.mp4')])
 
   print('Encoding:'+'\n\n')
