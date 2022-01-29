@@ -110,17 +110,17 @@ def __parseacue ():
       if geninfostart:  
         
         if 'GENRE' in line:
-            geninfo["genre"]=' '.join(line.split(' ')[2:]).replace('\n','').replace('"','')
+            geninfo["genre"]=' '.join(line.split(' ')[2:]).replace('\n','').replace('"','').lstrip()
         if 'DATE' in line:
-            geninfo["date"]=' '.join(line.split(' ')[2:]).replace('\n','').replace('"','')
+            geninfo["date"]=' '.join(line.split(' ')[2:]).replace('\n','').replace('"','').lstrip()
         if 'COMMENT' in line:
-            geninfo["comment"]=' '.join(line.split(' ')[2:]).replace('\n','').replace('"','')
+            geninfo["comment"]=' '.join(line.split(' ')[2:]).replace('\n','').replace('"','').lstrip()
         if 'PERFORMER' in line:
             geninfo["performer"]=' '.join(line.split(' ')[1:]).replace('\n','').replace('"','').lstrip().title()
         if 'TITLE' in line:
             geninfo["title"]=' '.join(line.split(' ')[1:]).replace('\n','').replace('"','').lstrip().title()
         if 'FILE' in line:
-            geninfo["file"]=' '.join(line.split(' ')[1:]).split('"')[1::2]  
+            geninfo["file"]=' '.join(line.split(' ')[1:]).split('"')[1::2]
             geninfostart=0
       else:  
 
@@ -139,13 +139,17 @@ def __parseacue ():
            tr["index"]=hour+':'+minute+':'+second
            if tr:
                tracks.append(tr)
+ 
  if not os.path.exists(geninfo["file"][0]):
         print("Cannot find " + geninfo["file"][0])
         sys.exit(1)
    
  path = Path(__rpunsf(geninfo["performer"]+' - '+geninfo["title"]))
- path.mkdir(parents=True, exist_ok=True)
- 
+ try:
+     path.mkdir(parents=True, exist_ok=True)
+ except:
+     print("Unable to create output directory.")
+     return 1
  for idx, val in enumerate(tracks):
   cmd = ['ffmpeg','-ss',val["index"]] 
   try:
@@ -153,12 +157,20 @@ def __parseacue ():
        cmd.append(('-to '+tracks[idx+1]["index"]).split(' ')[0])
        cmd.append(('-to '+tracks[idx+1]["index"]).split(' ')[1])
   except:
-       print("End of tracks reached.")
-  cmd.extend(['-i',cudir+'/'+str(geninfo["file"][0]),'-b:a',bitrate,'-c:a',lib,'-vn','-metadata','picture='+cudir+'/'+'cover.jpg','-metadata','title='+tracks[idx]["title"],'-metadata','artist='+tracks[idx]["performer"],'-metadata','date='+geninfo["date"],'-metadata','genre='+geninfo["genre"],'-metadata','comment='+geninfo["comment"]+'\nRipped by Cue Splitter (Sergei Korneev, 2021)', cudir+'/'+str(path)+'/'+__rpunsf(val["num"]+' - '+val["title"]+'.mp4')])
+       print('\n\nEnd of tracks reached.\n\n')
+  cmd.extend(
+          ['-i',cudir+'/'+str(geninfo["file"][0]),
+          '-b:a',bitrate,
+          '-c:a',lib,'-vn',
+          '-metadata','picture='+cudir+'/'+'cover.jpg',
+          '-metadata','title='+tracks[idx]["title"],
+          '-metadata','artist='+tracks[idx]["performer"],
+          '-metadata','date='+geninfo["date"],
+          '-metadata','genre='+geninfo["genre"],
+          '-metadata','comment='+geninfo["comment"]+'\nRipped by Cue Splitter (Sergei Korneev, 2021)',
+          cudir+'/'+str(path)+'/'+__rpunsf(val["num"]+' - '+val["title"]+'.mp4')])
 
-  print('Encoding:'+'\n\n')
-  print(cmd)
-  print('\n\n')
+  print('Encoding:'+'\n\n'+str(cmd)+'\n\n')
   popen = subprocess.Popen(cmd, shell=False)
   popen.wait()
   rc = popen.returncode
