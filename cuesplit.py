@@ -124,6 +124,11 @@ def __parseacue ():
             geninfostart=0
       else:  
 
+       if 'FILE' in line:
+            tr["file"]=' '.join(line.split(' ')[1:]).split('"')[1::2]
+       else:
+            tr["file"]=geninfo["file"]
+       
        if 'TRACK' in line:
            tr={
                  "performer": geninfo["performer"],
@@ -133,6 +138,11 @@ def __parseacue ():
 
            }
            tr["num"]=line.split('TRACK')[1].split(' ')[1]
+
+
+
+
+
        if 'TITLE' in line:     
            tr["title"]=' '.join(line.split('TITLE')[1:]).replace('\n','').replace('"','').lstrip().title()
        if 'PERFORMER' in line: 
@@ -173,7 +183,7 @@ def __parseacue ():
      extension=".mp4"
 
   cmd.extend(
-          ['-i',cudir+'/'+str(geninfo["file"][0]),
+          ['-i',cudir+'/'+str(tracks[idx]["file"][0]),
           '-b:a',bitrate,
           '-c:a',lib,'-vn',
           '-metadata','picture='+cudir+'/'+'cover.jpg',
