@@ -24,7 +24,7 @@ lib='flac'
 
 '''
 
-bitrate='512k'
+bitrate='400k'
 lib='libopus'
 
 cudir=(os.path.abspath(os.getcwd()))
@@ -125,7 +125,13 @@ def __parseacue ():
       else:  
 
        if 'TRACK' in line:
-           tr={}
+           tr={
+                 "performer": geninfo["performer"],
+                 "comment":"No commentary",
+                 "title":"Unknown title",
+                 "file":""
+
+           }
            tr["num"]=line.split('TRACK')[1].split(' ')[1]
        if 'TITLE' in line:     
            tr["title"]=' '.join(line.split('TITLE')[1:]).replace('\n','').replace('"','').lstrip().title()
@@ -158,6 +164,14 @@ def __parseacue ():
        cmd.append(('-to '+tracks[idx+1]["index"]).split(' ')[1])
   except:
        print('\n\nEnd of tracks reached.\n\n')
+
+  if lib == "libopus":
+      extension=".opus"
+  elif lib == ".aac":
+      extension=".m4a"
+  else:
+     extension=".mp4"
+
   cmd.extend(
           ['-i',cudir+'/'+str(geninfo["file"][0]),
           '-b:a',bitrate,
@@ -168,7 +182,7 @@ def __parseacue ():
           '-metadata','date='+geninfo["date"],
           '-metadata','genre='+geninfo["genre"],
           '-metadata','comment='+geninfo["comment"]+'\nRipped by Cue Splitter (Sergei Korneev, 2021)',
-          cudir+'/'+str(path)+'/'+__rpunsf(val["num"]+' - '+val["title"]+'.mp4')])
+          cudir+'/'+str(path)+'/'+__rpunsf(val["num"]+' - '+val["title"] + extension)])
 
   print('Encoding:'+'\n\n'+str(cmd)+'\n\n')
   popen = subprocess.Popen(cmd, shell=False)
